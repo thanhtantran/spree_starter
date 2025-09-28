@@ -13,7 +13,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 postgresql-client libpq-dev libvips redis-tools && \
+    apt-get install --no-install-recommends -y curl libffi-dev libyaml-dev libjemalloc2 postgresql-client libpq-dev libvips redis-tools && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 ENV RAILS_ENV="production" \
@@ -27,6 +27,9 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install bundler 
+RUN gem install bundler -v 2.6.5
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
