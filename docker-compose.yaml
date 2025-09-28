@@ -1,20 +1,67 @@
 services:
   postgres:
+    container_name: spree_postgres   
     image: postgres:16-alpine
+    restart: unless-stopped  
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: spree
+      POSTGRES_USER: spree_user
+      POSTGRES_PASSWORD: spree_password
+      TZ: Asia/Ho_Chi_Minh
     volumes:
-      - 'postgres:/var/lib/postgresql/data'
+      - ./postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - 5432:5432
+    networks:
+      - spree_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spree_user -d spree"]
+      interval: 10s
+      timeout: 5s
+      retries: 5      
+            
   redis:
+    container_name: spree_redis  
     image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Ho_Chi_Minh    
     ports:
-      - "6379:6379"
+      - 6379:6379
     volumes:
-      - 'redis:/data'
+      - ./redis_data:/data
+    networks:
+      - spree_network      
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5      
+      
+  # Spree Starter Application
+  spree_starter:
+    container_name: spree_starter
+    image: thanhtantran/spree_starter:v5-arm64
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config/environments:/rails/config/environments
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      SECRET_KEY_BASE: a54f26689ce38c96d33d03c38a415b93529df2b6fdf6227dca3f4dca611ad17cef9525db79ec0da9cf0de41c502620086e183b419a968a8fc0a632b43bec4c0d
+      DATABASE_URL: postgres://spree_user:spree_password@postgres:5432/spree
+      REDIS_URL: redis://redis:6379
+      RAILS_ENV: production # Change to development for initial setup   
+    ports:
+      - "4000:3000"
+    networks:
+      - spree_network      
 
-volumes:
-  postgres:
-  redis:
+# Custom network for service communication
+networks:
+  spree_network:
+    driver: bridge  
