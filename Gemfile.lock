@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/spree-edge/spree_openai.git
+  revision: 884e835a7f6b11e7e8922e937f2bb1fd642d55d5
+  specs:
+    spree_openai (0.0.1)
+      spree (>= 4.8.0)
+      spree_extension
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -1011,6 +1019,7 @@ DEPENDENCIES
   spree_google_analytics (~> 1.0)
   spree_i18n
   spree_klaviyo (~> 1.0)
+  spree_openai!
   spree_paypal_checkout (~> 0.5)
   spree_sample (~> 5.1)
   spree_storefront (~> 5.1)
@@ -1021,7 +1030,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 3.3.0p0
+   ruby 3.2.4p170
 
 BUNDLED WITH
    2.6.5

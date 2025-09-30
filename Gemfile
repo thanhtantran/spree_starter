@@ -109,4 +109,4 @@ gem "spree_stripe"
 gem "spree_google_analytics", "~> 1.0"
 gem "spree_klaviyo", "~> 1.0"
 gem "spree_paypal_checkout", "~> 0.5"
-gem "spree_openai"
+gem "spree_openai",  github: 'spree-edge/spree_openai'
